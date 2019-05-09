@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AVFaceDetection</string>
+    <string name="All">All</string>
+    <string name="Faces">Faces</string>
+    <string name="NonFaces">Non Faces</string>
+    <string name="FaceDetectionResult">%d faces detected of %d images</string>
+    <string name="Result">Result</string>
+    <string name="Awesome">Awesome</string>
+</resources>
