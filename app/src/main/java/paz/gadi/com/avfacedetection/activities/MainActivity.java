@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -23,7 +24,7 @@ import paz.gadi.com.avfacedetection.viewmodels.MainViewModelFactory;
 
 public class MainActivity extends AppCompatActivity implements MainMvvm.View {
 
-    private boolean isActive;
+    private boolean _isActive;
     private final int MY_PERMISSIONS_REQUEST_READ_WRITE = 1;
 
     @Override
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_WRITE:
                 boolean isPerpermissionForAllGranted = false;
@@ -65,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
                             isPerpermissionForAllGranted = false;
                         }
                     }
-                } else {
-                    isPerpermissionForAllGranted = false;
                 }
                 if(!isPerpermissionForAllGranted){
                     finish();
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
     @Override
     public void notifyUserOnCompleteDetection(String text) {
         //isActive means the app is on foreground
-        if (isActive) {
+        if (_isActive) {
             displayAlert(text);
         }
         else{
@@ -120,13 +119,12 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             {
-                String channelId = "Your_channel_id";
+                String channelId = "face_detection";
                 NotificationChannel channel = new NotificationChannel(channelId,
                         "Face Detection Ended", NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
                 notificationBuilder.setChannelId(channelId);
             }
-
             notificationManager.notify(1, notificationBuilder.build());
         }
         catch(Exception ex){
@@ -136,12 +134,12 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
     @Override
     protected void onResume() {
         super.onResume();
-        isActive = true;
+        _isActive = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        isActive = false;
+        _isActive = false;
     }
 }

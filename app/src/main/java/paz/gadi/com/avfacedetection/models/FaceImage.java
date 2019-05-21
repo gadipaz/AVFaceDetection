@@ -7,10 +7,10 @@ import com.bumptech.glide.Glide;
 
 public class FaceImage {
 
-    private String imageUrl;
+    private String _imageUrl;
 
     public FaceImage(String path){
-        imageUrl = path;
+        _imageUrl = path;
     }
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView view, String imageUrl) {
@@ -20,7 +20,7 @@ public class FaceImage {
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return _imageUrl;
     }
 
 }

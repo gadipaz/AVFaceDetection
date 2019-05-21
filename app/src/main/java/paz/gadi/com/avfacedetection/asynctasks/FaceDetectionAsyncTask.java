@@ -1,11 +1,9 @@
 package paz.gadi.com.avfacedetection.asynctasks;
 
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -14,11 +12,8 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import paz.gadi.com.avfacedetection.R;
 import paz.gadi.com.avfacedetection.asynctasks.AsyncTaskInterfaces.FaceDetectionResponse;
 import paz.gadi.com.avfacedetection.models.FaceImage;
 import paz.gadi.com.avfacedetection.utils.Utils;

@@ -19,10 +19,10 @@ import paz.gadi.com.avfacedetection.models.FaceImage;
 public class AllFragment extends Fragment {
 
     public FragmentAllBinding binding;
-    private ImagesAdapter imagesAdapter;
+    private ImagesAdapter _magesAdapter;
 
     public AllFragment(){
-        imagesAdapter = new ImagesAdapter();
+        _magesAdapter = new ImagesAdapter();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,17 +32,17 @@ public class AllFragment extends Fragment {
         binding.setLifecycleOwner(this);
 
         binding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        binding.recyclerView.setAdapter(imagesAdapter);
+        binding.recyclerView.setAdapter(_magesAdapter);
 
         return binding.getRoot();
     }
 
     public void setImages(List<FaceImage> images) {
-        imagesAdapter.setImages(images);
+        _magesAdapter.setImages(images);
     }
 
     public void clear() {
-        imagesAdapter.clear();
+        _magesAdapter.clear();
     }
 
     @Override

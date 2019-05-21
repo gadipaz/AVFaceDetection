@@ -3,16 +3,13 @@ package paz.gadi.com.avfacedetection.asynctasks;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
-import paz.gadi.com.avfacedetection.models.FaceImage;
 import paz.gadi.com.avfacedetection.utils.Utils;
 
 import static paz.gadi.com.avfacedetection.asynctasks.AsyncTaskInterfaces.*;
@@ -34,7 +31,7 @@ public class DownloadImagesAsyncTask extends AsyncTask<Void, Void, Void> {
         if (!isDirectoryExists){
             isDirectoryExists = directory.mkdirs();
         }
-        //Download sample images from web
+        //If the folder is empty then download sample images from web
         if (isDirectoryExists && directory.listFiles().length == 0){
             for (int i = 0; i < Utils.IMAGE_URLS.length; i++) {
                 try {

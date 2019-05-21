@@ -2,25 +2,13 @@ package paz.gadi.com.avfacedetection.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +39,8 @@ public class MainViewModel extends ViewModel implements MainMvvm.ViewModel {
         _facesFragment = new AllFragment();
         _nonFacesFragment = new AllFragment();
         showAllFragment();
+
+        //If no iamges found in folder /downloads/anyvision then download sample images from the web
         DownloadImagesAsyncTask task = new DownloadImagesAsyncTask();
         task.onComplete = new AsyncTaskInterfaces.DownloadImagesResponse() {
             @Override
@@ -89,6 +79,7 @@ public class MainViewModel extends ViewModel implements MainMvvm.ViewModel {
         return true;
     }
 
+    //Detect faces in images and classify them to Faces and Non Faces
     public void onFabClick(View view){
         clearFacesAndNonFacesImages();
         FaceDetectionAsyncTask task = new FaceDetectionAsyncTask();

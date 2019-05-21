@@ -1,7 +1,6 @@
 package paz.gadi.com.avfacedetection.asynctasks;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import paz.gadi.com.avfacedetection.models.FaceImage;
 

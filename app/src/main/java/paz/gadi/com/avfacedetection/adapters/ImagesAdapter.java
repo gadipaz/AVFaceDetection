@@ -15,41 +15,41 @@ import paz.gadi.com.avfacedetection.models.FaceImage;
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MyViewHolder>{
 
-    private List<FaceImage> imagesList;
-    private LayoutInflater layoutInflater;
+    private List<FaceImage> _imagesList;
+    private LayoutInflater _layoutInflater;
 
     public ImagesAdapter() {
-        imagesList = new ArrayList<>();
+        _imagesList = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        if (layoutInflater == null) {
-            layoutInflater = LayoutInflater.from(viewGroup.getContext());
+        if (_layoutInflater == null) {
+            _layoutInflater = LayoutInflater.from(viewGroup.getContext());
         }
         ImageRowItemBinding binding =
-                DataBindingUtil.inflate(layoutInflater, R.layout.image_row_item, viewGroup, false);
+                DataBindingUtil.inflate(_layoutInflater, R.layout.image_row_item, viewGroup, false);
         return new MyViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
-        holder.binding.setFaceImage(imagesList.get(i));
+        holder.binding.setFaceImage(_imagesList.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return imagesList.size();
+        return _imagesList.size();
     }
 
     public void setImages(List<FaceImage> images) {
-        this.imagesList = images;
+        this._imagesList = images;
         notifyDataSetChanged();
     }
 
     public void clear() {
-        this.imagesList.clear();
+        this._imagesList.clear();
         notifyDataSetChanged();
     }
 
