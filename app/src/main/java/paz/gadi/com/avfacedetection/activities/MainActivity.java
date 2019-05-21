@@ -24,15 +24,14 @@ import paz.gadi.com.avfacedetection.viewmodels.MainViewModelFactory;
 public class MainActivity extends AppCompatActivity implements MainMvvm.View {
 
     private boolean isActive;
-    private MainViewModel mViewModel;
     private final int MY_PERMISSIONS_REQUEST_READ_WRITE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mViewModel = ViewModelProviders.of(this, new MainViewModelFactory(this)).get(MainViewModel.class);
-        binding.setVm(mViewModel);
+        MainViewModel viewModel = ViewModelProviders.of(this, new MainViewModelFactory(this)).get(MainViewModel.class);
+        binding.setVm(viewModel);
         binding.setLifecycleOwner(this);
 
         isStoragePermissionGranted();
@@ -104,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements MainMvvm.View {
                 .setMessage(text)
                 .setPositiveButton(R.string.Awesome, null)
                 .setIcon(android.R.drawable.ic_dialog_info)
+                .setCancelable(false)
                 .show();
     }
     private void displayNotification(String text) {

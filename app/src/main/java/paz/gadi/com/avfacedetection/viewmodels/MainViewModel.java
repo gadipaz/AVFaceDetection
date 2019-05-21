@@ -21,7 +21,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import paz.gadi.com.avfacedetection.R;
+import paz.gadi.com.avfacedetection.asynctasks.AsyncTaskInterfaces;
+import paz.gadi.com.avfacedetection.asynctasks.DownloadImagesAsyncTask;
+import paz.gadi.com.avfacedetection.asynctasks.FaceDetectionAsyncTask;
 import paz.gadi.com.avfacedetection.base.view.MvvmView;
 import paz.gadi.com.avfacedetection.fragments.*;
 import paz.gadi.com.avfacedetection.models.FaceImage;
@@ -35,16 +41,34 @@ public class MainViewModel extends ViewModel implements MainMvvm.ViewModel {
     private AllFragment _allFragment;
     private AllFragment _facesFragment;
     private AllFragment _nonFacesFragment;
+    private int _numOfImagesToDetect;
 
-    public final MutableLiveData<Boolean> isDetectingFaces = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> isInProcess = new MutableLiveData<>();
 
     MainViewModel(MvvmView view){
         _view = (MainMvvm.View)view;
         _allFragment = new AllFragment();
         _facesFragment = new AllFragment();
         _nonFacesFragment = new AllFragment();
-        isDetectingFaces.setValue(false);
         showAllFragment();
+        DownloadImagesAsyncTask task = new DownloadImagesAsyncTask();
+        task.onComplete = new AsyncTaskInterfaces.DownloadImagesResponse() {
+            @Override
+            public void onComplete() {
+                List<FaceImage> images = new ArrayList<>();
+                File directory = new File(Utils.ExternalStorageDirectory);
+                if (directory.exists()){
+                    for (File file : directory.listFiles()) {
+                        images.add(new FaceImage(file.getPath()));
+                    }
+                }
+                updateAllFragment(images);
+                _numOfImagesToDetect = images.size();
+                isInProcess.setValue(false);
+            }
+        };
+        isInProcess.setValue(true);
+        task.execute();
     }
 
     public boolean onNavigationClick(@NonNull MenuItem item) {
@@ -64,89 +88,54 @@ public class MainViewModel extends ViewModel implements MainMvvm.ViewModel {
         }
         return true;
     }
+
     public void onFabClick(View view){
-        new AsyncTaskFaceDetection().execute();
-    }
-
-    private class AsyncTaskFaceDetection extends AsyncTask<Void, Void, String>{
-        @Override
-        protected void onPreExecute() {
-            _allFragment.clear();
-            _facesFragment.clear();
-            _nonFacesFragment.clear();
-            isDetectingFaces.setValue(true);
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            int facesCounter = 0;
-            int allImagesCounter = 0;
-            Bitmap bitmap;
-            String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-            for (int i = 0; i < Utils.IMAGE_URLS.length; i++) {
-                try {
-                    String filePath = String.format("%s/%d.jpg", extStorageDirectory, i);
-                    InputStream in = new java.net.URL(Utils.IMAGE_URLS[i]).openStream();
-                    bitmap = BitmapFactory.decodeStream(in);
-
-                    final FaceDetector detector = new FaceDetector.Builder(_view.getContext())
-                            .setTrackingEnabled(false)
-                            .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                            .build();
-
-                    Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-                    SparseArray<Face> faces = detector.detect(frame);
-
-                    saveImage(bitmap, filePath);
-
-                    FaceImage faceImage = new FaceImage(filePath);
-                    //if face detected
-                    if (faces.size() > 0){
-                        updateFacesFragment(faceImage);
-                        facesCounter++;
-                    }
-                    else{
-                        updateNonFacesFragment(faceImage);
-                    }
-                    allImagesCounter++;
-                    updateAllFragment(faceImage);
-
-                } catch (Exception e) {
-                    Log.e("Error Message", e.getMessage());
-                    e.printStackTrace();
-                }
+        clearFacesAndNonFacesImages();
+        FaceDetectionAsyncTask task = new FaceDetectionAsyncTask();
+        task.onComplete = new AsyncTaskInterfaces.FaceDetectionResponse() {
+            @Override
+            public void onComplete(ArrayList<ArrayList<FaceImage>> facesDetections) {
+                updateFacesFragment(facesDetections.get(0));
+                updateNonFacesFragment(facesDetections.get(1));
+                String result = String.format(_view.getContext().getString(R.string.FaceDetectionResult), facesDetections.get(0).size(), _numOfImagesToDetect);
+                _view.notifyUserOnCompleteDetection(result);
+                isInProcess.setValue(false);
             }
-            return String.format(_view.getContext().getString(R.string.FaceDetectionResult), facesCounter, allImagesCounter);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            _view.notifyUserOnCompleteDetection(result);
-            isDetectingFaces.setValue(false);
-        }
+        };
+        isInProcess.setValue(true);
+        task.execute(_view.getContext());
     }
 
-    private void updateAllFragment(final FaceImage image) {
+    private void clearFacesAndNonFacesImages(){
         ((AppCompatActivity) _view.getContext()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                _allFragment.addImage(image);
+                _facesFragment.clear();
+                _nonFacesFragment.clear();
             }
         });
     }
-    private void updateFacesFragment(final FaceImage image) {
+    private void updateAllFragment(final List<FaceImage> images) {
         ((AppCompatActivity) _view.getContext()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                _facesFragment.addImage(image);
+                _allFragment.setImages(images);
             }
         });
     }
-    private void updateNonFacesFragment(final FaceImage image) {
+    private void updateFacesFragment(final List<FaceImage> images) {
         ((AppCompatActivity) _view.getContext()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                _nonFacesFragment.addImage(image);
+                _facesFragment.setImages(images);
+            }
+        });
+    }
+    private void updateNonFacesFragment(final List<FaceImage> images) {
+        ((AppCompatActivity) _view.getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                _nonFacesFragment.setImages(images);
             }
         });
     }
@@ -167,26 +156,5 @@ public class MainViewModel extends ViewModel implements MainMvvm.ViewModel {
         FragmentTransaction transaction = ((AppCompatActivity) _view.getContext()).getSupportFragmentManager().beginTransaction();
         transaction.replace(_view.getFragmentContainer(), fragment);
         transaction.commit();
-    }
-
-    private void saveImage(Bitmap bitmap, String path) {
-
-        File file = new File(path);
-        if (file.exists()) {
-            file.delete();
-            file = new File(path);
-        }
-        try {
-            OutputStream outStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outStream);
-            outStream.flush();
-            outStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-
-
     }
 }

@@ -43,8 +43,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MyViewHold
         return imagesList.size();
     }
 
-    public void addImage(FaceImage imagePath) {
-        this.imagesList.add(imagePath);
+    public void setImages(List<FaceImage> images) {
+        this.imagesList = images;
         notifyDataSetChanged();
     }
 

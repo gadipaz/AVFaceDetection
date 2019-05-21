@@ -8,6 +8,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.List;
+
 import paz.gadi.com.avfacedetection.R;
 import paz.gadi.com.avfacedetection.adapters.ImagesAdapter;
 import paz.gadi.com.avfacedetection.databinding.FragmentAllBinding;
@@ -34,8 +37,8 @@ public class AllFragment extends Fragment {
         return binding.getRoot();
     }
 
-    public void addImage(FaceImage imagePath) {
-        imagesAdapter.addImage(imagePath);
+    public void setImages(List<FaceImage> images) {
+        imagesAdapter.setImages(images);
     }
 
     public void clear() {

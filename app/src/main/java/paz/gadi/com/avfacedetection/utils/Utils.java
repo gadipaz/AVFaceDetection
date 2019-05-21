@@ -1,5 +1,7 @@
 package paz.gadi.com.avfacedetection.utils;
 
+import android.os.Environment;
+
 public class Utils {
 
     public static String[] IMAGE_URLS = {
@@ -14,7 +16,11 @@ public class Utils {
             "https://cdn.pixabay.com/photo/2017/07/22/20/40/kid-2529907__480.jpg",
             "https://cdn.pixabay.com/photo/2015/01/15/12/46/model-600225__480.jpg",
             "https://cdn.pixabay.com/photo/2018/01/04/07/59/salt-harvesting-3060093__480.jpg",
-            "https://cdn.pixabay.com/photo/2016/12/09/09/52/little-girl-1894125__480.jpg"
+            "https://cdn.pixabay.com/photo/2016/12/09/09/52/little-girl-1894125__480.jpg",
+            "https://cdn.pixabay.com/photo/2016/11/14/04/57/young-1822656__480.jpg",
+            "https://cdn.pixabay.com/photo/2015/09/02/13/24/girl-919048__480.jpg"
     };
+
+    public static String ExternalStorageDirectory = Environment.getExternalStorageDirectory() + "/downloads/anyvision";
 
 }
